@@ -225,7 +225,6 @@ def download_trails():
     cw = csv.writer(si)
 
     data = []
-    import ipdb;ipdb.sset_trace()
     for trial_by_ncit in combined_patient.trials_by_ncit:
         for trial in trial_by_ncit.get("trials", []):
             data.append([getattr(trial, attribute) for attribute in header])
