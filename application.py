@@ -128,6 +128,7 @@ def getInfo():
     session["combined_patient"] = combined
     socketio.emit(event_name, {"data": 70}, room=session.sid)
 
+
     if patient_id is not None and token is not None:
         session['Laboratory_Results'] = get_lab_observations_by_patient(patient_id, token)
         app.logger.debug("FROM SESSION", session['Laboratory_Results'])

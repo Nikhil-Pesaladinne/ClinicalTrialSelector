@@ -12,7 +12,7 @@ from pprint import pformat
 from apis import VaApi
 from flask import current_app as app
 
-client = boto3.client(service_name="comprehendmedical", config=botocore.client.Config(max_pool_connections=40) )
+client = boto3.client(service_name="comprehendmedical", config=botocore.client.Config(max_pool_connections=40) ,region_name='us-east-1')
 
 # # BASE_URL = "https://dev-api.vets.gov/services/argonaut/v0/"
 # BASE_URL = app.config["VA_API_BASE_URL"] + "services/fhir/v0/argonaut/data-query/"
@@ -111,9 +111,12 @@ def find_codes(disease):
 def find_trials(ncit_codes, gender="unknown", age=0):
     size = 50
     trials = []
+    sk_param = None
+    sk_dict = None
     for ncit_dict in ncit_codes:
         total = 1
         next_trial = 1
+
         while next_trial<= total:
             ncit = ncit_dict["ncit"]
             params = {"size": f"{size}", "from": f"{next_trial}", "diseases.nci_thesaurus_concept_id": ncit}
@@ -122,14 +125,22 @@ def find_trials(ncit_codes, gender="unknown", age=0):
             if (age != 0):
                 params["eligibility.structured.max_age_in_years_gte"] = age
                 params["eligibility.structured.min_age_in_years_lte"] = age
+            sk_param = str(params)
             res = req.get(app.config['TRIALS_URL'], params=params)
             res_dict = res.json()
             trialset = {"code_ncit": ncit, "trialset": res_dict}
+            sk_dict = trialset
             total = res_dict["total"]
             next_trial += size
-
             trials.append(trialset)
     return trials
+
+def find_new_trails(ncit_code):
+    search_text = ncit_code['ncit_desc']
+    print('Calling new api for ncit_code-' + ncit_code['ncit'] + ' and ncit desc -' + ncit_code['ncit_desc'] )
+    params = {'expr': search_text, 'min_rnk': 1, 'max_rnk': 100, 'fmt': 'json'} #get trials based on condition
+    response = req.get(app.config['ADDITIONAL_TRIALS_URL'], params=params)
+    return response.json()
 
 
 def find_all_codes(disease_list):
