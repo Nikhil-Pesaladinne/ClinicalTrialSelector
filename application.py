@@ -14,6 +14,7 @@ import logging, sys
 import ssl
 from flask_socketio import SocketIO, join_room
 from flask import Flask, session, redirect, render_template, request, flash, make_response
+from flask.logging import default_handler
 from flask_session import Session 
 from flask_talisman import Talisman
 from authlib.integrations.flask_client import OAuth
@@ -50,6 +51,10 @@ app.config.from_pyfile("secrets/default_keys.cfg")
 
 from patient import get_lab_observations_by_patient, filter_by_inclusion_criteria
 
+formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(name)-23s %(message)s')
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(formatter)
+logging.getLogger().addHandler(handler)
 logging.getLogger().setLevel(log_level)
 logging.info("Clinical Trial Selector starting...")
 logging.warning(f"app.env = {app.env}")
@@ -77,6 +82,7 @@ def showtrials():
 
 @app.route('/welcome')
 def welcome():
+    combined = combined_from_session()
     return render_template('welcome.html', welcome_selection="current")
 
 @app.route("/authenticate/<source>", methods=["POST"])
@@ -115,28 +121,11 @@ def getInfo():
     socketio.emit(event_name, {"data": 15}, room=session.sid)
     if (len(combined.from_source)==0):
         return redirect("/")
+    app.logger.info("loading data...")
     combined.load_data()
     socketio.emit(event_name, {"data": 50}, room=session.sid)
-    
-    patient_id = getattr(combined.from_source.get('va', {}), 'mrn', None)
-    token = getattr(combined.from_source.get('va', {}), 'token', None)
-
-    session['codes'] = combined.ncit_codes
-    session['trials'] = combined.trials
-    session['numTrials'] = combined.numTrials
-    session['index'] = 0
-    session["combined_patient"] = combined
-    socketio.emit(event_name, {"data": 70}, room=session.sid)
-
-
-    if patient_id is not None and token is not None:
-        session['Laboratory_Results'] = get_lab_observations_by_patient(patient_id, token)
-        app.logger.debug("FROM SESSION", session['Laboratory_Results'])
-        combined.VAPatient.load_test_results()
-        combined.results = combined.VAPatient.results
-        combined.latest_results = combined.VAPatient.latest_results
-        # for trial in combined.trials:
-        #     trial.determine_filters()
+    app.logger.info("loading test results...")
+    combined.load_test_results()
     socketio.emit(event_name, {"data": 95}, room=session.sid)
     socketio.emit('disconnect', {"data": 100}, room=session.sid)
 
@@ -144,26 +133,38 @@ def getInfo():
 
 @app.route('/trials')
 def show_all_trials():
+    if not session.get("combined_patient", None):
+        return welcome()
     return render_template('welcome.html', form=FilterForm(), trials_selection="current", labs=labs)
 
 @app.route('/excluded')
 def show_excluded():
+    if not session.get("combined_patient", None):
+        return welcome()
     return render_template('welcome.html', form=FilterForm(), excluded_selection="current")
 
 @app.route('/conditions')
 def show_conditions():
+    if not session.get("combined_patient", None):
+        return welcome()
     return render_template('welcome.html', form=FilterForm(), conditions_selection="current")
 
 @app.route('/matches')
 def show_matches():
+    if not session.get("combined_patient", None):
+        return welcome()
     return render_template('welcome.html', form=FilterForm(), matches_selection="current")
 
 @app.route('/nomatches')
 def show_nomatches():
+    if not session.get("combined_patient", None):
+        return welcome()
     return render_template('welcome.html', form=FilterForm(), nomatches_selection="current")
 
 @app.route('/download_trials')
 def download_trails():
+    if not session.get("combined_patient", None):
+        return welcome()
     combined_patient = session['combined_patient']
     header = ['id', 'code_ncit', 'title', 'pi','official','summary','description']
 
