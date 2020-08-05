@@ -10,7 +10,7 @@
         arr[arr.length-1] = arr[arr.length-1].substring(0, arr.length-1)
         document.getElementById("unitValue").value = arr[document.getElementById("labType").selectedIndex].replace("&#39;", "").replace("&#39;", "")
       }
-    </script>
+0    </script>
     <script type="text/javascript">
       function showModal(elem) {
         var parentClasses = document.getElementById("modal-addlab").classList;
@@ -23,7 +23,17 @@
         }
       }
     </script>
-  {% if trials_selection and ns.combined and ns.combined.latest_results.values() | length > 0  %}
+    <script> 
+      function replaceAll(string, target, replacement)
+      {
+        while(string.includes(target))
+        {
+          string = string.replace(target, replacement)
+        }
+        return string;
+      }
+    </script>
+  {% if addlab_selection and ns.combined and ns.combined.latest_results.values() | length >= 0  %}
     {% set results = ns.combined.latest_results %}
     <div class="feature vads-u-margin-top--0" id="LaboratoryObservations">
       <div> 
@@ -33,34 +43,34 @@
       </div>
       <form method=post class="cts-launch-progress-bar" action="/filter_by_lab_results">
         {{ form.hidden_tag() }}
-        <table class="vads-u-margin--0">
+        <table>
           <thead>
             <tr>
-              {% for test in labs.tests %}
-                <th>{{ test.name | title }}</th>
-                <th>Units</th>
-              {% endfor %}
+              <td width="30%" align="center"><strong>Lab Type Name</strong></td>
+              <td><strong>Value</strong></td>
             </tr>
-          </thead>
-          <tbody>
-            <tr>
-              {% for test in labs.tests %}
-                {% if results[test.name] %}
-                    {% set result = results[test.name] %}
-                    <td class="page-header">
-                      {{ render_input(test.name,result.value|float|round(2)|string) }}
-                    </td>
-                    <td>{{ result.unit }}</td>
-                {% else %}
-                    <td class="page-header"> NA </td>
+        </thead>
+            {% for test in results.keys()%}
+            {% set result = results[test]%}
+            <tbody>
+                <tr>
+                  <td style="padding-bottom:.1em; padding-top:.1em;"><strong>{{result.test_name.replace("_"," ").upper() | title}}</strong></td>
+                  {% if result.unit %}
+                  <td>
+                      {{ render_input(test, result.value|float|round(2)|string + " " + result.unit) }}
+                  </td>
+                  {% else %}
+                  <td>
+                    {{ render_input(test, result.value|float|round(2)|string) }}
+                </td>
                 {% endif %}
-              {% endfor %}
-            </tr>
-          </tbody>
+                </tr>
+            </tbody>
+            {% endfor %}  
         </table>
         <input class="usa-button vads-u-margin-y--1" type=submit value="Filter trials">
       </form>                 
-    <div id="modal-addlab" class="va-overlay va-modal va-modal-large" style="position:relative; left:80px; top:2px; display:none;">
+    <div id="modal-addlab" class="va-overlay va-modal va-modal-large" style="position:absolute; left:50px; top:0px; display:none; width:0;">
       <div class="va-modal-inner">
         <h2 class="va-modal-title"> Add Lab Result</h2>
         <button class="va-modal-close va-overlay-close" type="button" aria-label="Close this modal" onClick="showModal(this);">
@@ -73,7 +83,7 @@
               <label for="labType" class="control-label">Lab Type:</label>
               <select name="labType" id="labType" onchange ="onSelect()">
                 {% for lab in lab_names %}              
-                  <option value={{ lab }}>{{ lab }}</option>
+                  <option value='{{ lab }}'>{{ lab }}</option>
                 {% endfor %}   
               </select>
             </div>

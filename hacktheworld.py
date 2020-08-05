@@ -45,7 +45,6 @@ class Patient(metaclass=ABCMeta):
         self.matches: List[Dict[str,str]] = []
         self.codes_without_matches: List[Dict[str, str]] = []
         self.trials: List[Trial] = []
-
         self.after_init()
 
     @abstractmethod
