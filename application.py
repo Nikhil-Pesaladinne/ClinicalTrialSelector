@@ -146,6 +146,13 @@ def show_addlab():
     #app.logger.info(labs.values())
     return render_template('welcome.html', form=FilterForm(), addlab_selection="current", lab_names=lab_names, unit_names=unit_names)
 
+@app.route('/addcondition')
+def show_addcondition():
+    if not session.get("combined_patient", None):
+        return welcome()
+    return render_template('welcome.html', form=FilterForm(), addcondition_selection="current")
+
+
 @app.route('/matches')
 def show_matches():
     if not session.get("combined_patient", None):
@@ -203,6 +210,13 @@ def add_lab_result():
                                                                        unit=body['unitValue'])
     
     return redirect('/addlab')
+
+@app.route('/add_condition', methods=['POST'])
+def add_condition():
+    body = dict(request.form)
+    combined_patient = session['combined_patient']
+    combined_patient.add_extra_code(body['newCode'])
+    return getInfo()
 
 
 @app.route('/filter_by_lab_results', methods=['POST'])
