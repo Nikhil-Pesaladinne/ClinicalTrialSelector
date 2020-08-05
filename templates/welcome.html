@@ -23,16 +23,6 @@
         }
       }
     </script>
-    <script> 
-      function replaceAll(string, target, replacement)
-      {
-        while(string.includes(target))
-        {
-          string = string.replace(target, replacement)
-        }
-        return string;
-      }
-    </script>
   {% if addlab_selection and ns.combined and ns.combined.latest_results.values() | length >= 0  %}
     {% set results = ns.combined.latest_results %}
     <div class="feature vads-u-margin-top--0" id="LaboratoryObservations">
@@ -54,7 +44,7 @@
             {% set result = results[test]%}
             <tbody>
                 <tr>
-                  <td style="padding-bottom:.1em; padding-top:.1em;"><strong>{{result.test_name.replace("_"," ").upper() | title}}</strong></td>
+                  <td style="padding-bottom:.1em; padding-top:.1em;"><strong>{{result.test_name.replace("_"," ") | title}}</strong></td>
                   {% if result.unit %}
                   <td>
                       {{ render_input(test, result.value|float|round(2)|string + " " + result.unit) }}

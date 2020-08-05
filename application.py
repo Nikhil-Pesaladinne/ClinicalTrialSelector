@@ -144,7 +144,7 @@ def show_addlab():
     unit_names  = [filter.value_dict[lab]['default_unit_name'] for lab in filter.value_dict.keys()]
     #labs = hack.Patient.latest_results
     #app.logger.info(labs.values())
-    return render_template('welcome.html', form=FilterForm(), addlab_selection="current", lab_names=lab_names, unit_names=unit_names, labs=labs)
+    return render_template('welcome.html', form=FilterForm(), addlab_selection="current", lab_names=lab_names, unit_names=unit_names)
 
 @app.route('/matches')
 def show_matches():
