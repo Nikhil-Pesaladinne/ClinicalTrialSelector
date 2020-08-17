@@ -144,6 +144,8 @@ def show_addlab():
         return welcome()
     lab_names = [filter.value_dict[lab]['display_name'] for lab in filter.value_dict.keys()]
     unit_names  = [filter.value_dict[lab]['default_unit_name'] for lab in filter.value_dict.keys()]
+    #labs = hack.Patient.latest_results
+    #app.logger.info(labs.values())
     return render_template('welcome.html', form=FilterForm(), addlab_selection="current", lab_names=lab_names, unit_names=unit_names)
 
 @app.route('/addcondition')
@@ -203,13 +205,13 @@ class FilterForm(FlaskForm):
 def add_lab_result():
     body = dict(request.form)
     combined_patient = session['combined_patient']
+    logging.info("NEW PATIENT LAB VALUES")
+    logging.info(combined_patient.latest_results.keys())
     combined_patient.latest_results[body['labType']] = hack.TestResult(test_name=filter.reverse_value_dict[body['labType']],
                                                                        datetime=datetime.now(), value=body['labValue'],
                                                                        unit=body['unitValue'])
-
-    #logging.info("NEW PATIENT LAB VALUES")
-    #logging.info(combined_patient.latest_results)
-    return redirect('/trials')
+    
+    return redirect('/addlab')
 
 @app.route('/add_condition', methods=['POST'])
 def add_condition():

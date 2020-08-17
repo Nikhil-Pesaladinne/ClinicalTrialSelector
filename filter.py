@@ -12,7 +12,7 @@ value_dict = {
     "display_name": "ECOG",
     "aliases": "ecog|eastern cooperative oncology group|ecog performance grade|ecog performance status|ecog ps|eastern cooperative oncology group performance status",
     "bounds": "0|1|2|3|4",
-    "default_unit_name": "first_default",
+    "default_unit_name": "",
     "question": "What is your ECOG performance status?"
   },
   "gleason_score": {
