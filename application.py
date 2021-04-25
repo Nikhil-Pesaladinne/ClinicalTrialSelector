@@ -150,6 +150,10 @@ def show_addlab():
     unit_names  = [filter.value_dict[lab]['default_unit_name'] for lab in filter.value_dict.keys()]
     return render_template('welcome.html', form=FilterForm(), addlab_selection="current", lab_names=lab_names, unit_names=unit_names)
 
+@app.route('/about')
+def show_about():
+    return render_template('welcome.html', form=FilterForm(), about_selection="current")
+
 def show_addcondition(codes):
     if not session.get("combined_patient", None):
         return welcome()
@@ -274,7 +278,7 @@ def filter_by_lab_results():
     session['combined_patient'].trials_by_ncit = filter_trails_by_inclusion_criteria
     session['combined_patient'].numTrials = sum([len(x['trials']) for x in filter_trails_by_inclusion_criteria])
     session['combined_patient'].num_conditions_with_trials = len(filter_trails_by_inclusion_criteria)
-
+    
     session['excluded'] = excluded_trails_by_inclusion_criteria
     session['combined_patient'].filtered = True
     session['excluded_num_trials'] = sum([len(x['trials']) for x in excluded_trails_by_inclusion_criteria])

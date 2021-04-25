@@ -297,7 +297,13 @@ class Trial:
         self.population = trial_json['study_population_description']
         self.diseases = trial_json['diseases']
         self.filter_condition: list = []
-
+        self.is_va = str(trial_json['sites'])
+        if "org_va" in self.is_va:
+            temp = self.is_va.index("org_va")
+            if self.is_va[temp+9] == 'F':
+                self.is_va = False
+            else:
+                self.is_va = True
 
     def determine_filters(self) -> None:
         s: Set[str] = set()
@@ -384,6 +390,9 @@ class CombinedPatient:
         self.trials: List[Trial] = []
         self.ncit_codes: list = []
         self.trials_by_ncit: list = []
+        self.numVATrials = 0
+        self.num_conditions_with_va_trials = 0
+        self.va_trials_by_ncit = []
         self.ncit_without_trials: list = []
         self.results: List[TestResult] = []
         self.latest_results: Dict[str, TestResult] = {}
@@ -460,6 +469,17 @@ class CombinedPatient:
         self.loaded = True
         self.numTrials = len(self.trials)
         self.num_conditions_with_trials = len(self.trials_by_ncit)
+        self.numVATrials = 0
+        for code in self.trials_by_ncit:
+            trials = []
+            for trial in code["trials"]:
+                if type(trial) == Trial and trial.is_va:
+                    trials.append(trial)
+                    self.numVATrials += 1
+            if trials:
+                self.va_trials_by_ncit.append({"ncit": code, "trials": trials})
+        self.num_conditions_with_va_trials = len(self.va_trials_by_ncit)
+        logging.info(self.va_trials_by_ncit)
 
     def load_test_results(self) -> None:
         va_patient = self.va_patient()

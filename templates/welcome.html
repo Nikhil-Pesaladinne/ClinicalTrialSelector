@@ -198,46 +198,107 @@
 	{% elif trials_selection %}
 	<div class="tab-pane active" id="trials">
 		{% if ns.combined and ns.combined.loaded %}
-		<strong>
-			There are {{ ns.combined.numTrials }} trials for {{ ns.combined.num_conditions_with_trials }} condition{{'s' if ns.combined.num_conditions_with_trials > 1 else ''}}:
-		</strong>
-		<table class="vads-u-margin--0">
-			<thead>
-				<tr>
-					<th>Trial Id</th>
-					<th>Title</th>
-					{% if ns.combined.filtered %}
-					<th>Eligibility Criteria</th>
-					{% endif %}
-				</tr>
-			</thead>
-
-			{% for code in ns.combined.trials_by_ncit %}
-			<tbody class="usa-accordion">
-				<tr>
-					<td colspan="4" class="page-header">
-						<button class="usa-accordion-button" aria-expanded="false" aria-controls="{{ code['ncit']['ncit'] }}"> Trials for condition: {{ code["ncit"]["ncit_desc"] }} ({{ code["ncit"]["ncit"] }})</button>
-					</td>
-					<!-- <td colspan="4" class="page-header"><button type="button" class="tbtn"><i class="fa fa-plus-circle"></i>   Trials for condition: {{ code["ncit"]["ncit_desc"] }} ({{ code["ncit"]["ncit"] }})</button> </td>-->
-				</tr>
-			</tbody>
-			<tbody id="{{ code['ncit']['ncit'] }}" class="usa-accordion-content">
-				{% for trial in code["trials"] %}
-				<tr>
-					<td><a href="/trial?id={{ trial.id }}">{{ trial.id }}</a></td>
-					<td>{{ trial.title }}</td>
-					<td>
-						{% if trial.filter_condition %}
-						{% for condition, include in trial.filter_condition %}
-						{{condition}}
-						{% endfor %}
+		<input type="checkbox" id="isVA" onclick="displayTrials()">
+		<label for="isVA"> Show only VA Trials</label>
+		<div id="allTrials" style="display:block">
+			<strong>
+				There are {{ ns.combined.numTrials }} trials for {{ ns.combined.num_conditions_with_trials }} condition{{'s' if ns.combined.num_conditions_with_trials > 1 else ''}}:
+			</strong>
+			<table class="vads-u-margin--0">
+				<thead>
+					<tr>
+						<th>Trial Id</th>
+						<th>Title</th>
+						{% if ns.combined.filtered %}
+						<th>Eligibility Criteria</th>
 						{% endif %}
-					</td>
-				</tr>
+					</tr>
+				</thead>
+
+				{% for code in ns.combined.trials_by_ncit %}
+				<tbody class="usa-accordion">
+					<tr>
+						<td colspan="4" class="page-header">
+							<button class="usa-accordion-button" aria-expanded="false" aria-controls="{{ code['ncit']['ncit'] }}"> Trials for condition: {{ code["ncit"]["ncit_desc"] }} ({{ code["ncit"]["ncit"] }})</button>
+						</td>
+						<!-- <td colspan="4" class="page-header"><button type="button" class="tbtn"><i class="fa fa-plus-circle"></i>   Trials for condition: {{ code["ncit"]["ncit_desc"] }} ({{ code["ncit"]["ncit"] }})</button> </td>-->
+					</tr>
+				</tbody>
+				<tbody id="{{ code['ncit']['ncit'] }}" class="usa-accordion-content">
+					{% for trial in code["trials"] %}
+					<tr>
+						<td><a href="/trial?id={{ trial.id }}">{{ trial.id }}</a></td>
+						<td>{{ trial.title }}</td>
+						<td>
+							{% if trial.filter_condition %}
+							{% for condition, include in trial.filter_condition %}
+							{{condition}}
+							{% endfor %}
+							{% endif %}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
 				{% endfor %}
-			</tbody>
-			{% endfor %}
-		</table>
+			</table>
+		</div>
+		<div id="VATrials" style="display:none">
+			<strong>
+				There are {{ ns.combined.numVATrials }} trials for {{ ns.combined.num_conditions_with_va_trials }} condition{{'s' if ns.combined.num_conditions_with_va_trials > 1 else ''}}:
+			</strong>
+			<table class="vads-u-margin--0">
+				<thead>
+					<tr>
+						<th>Trial Id</th>
+						<th>Title</th>
+						{% if ns.combined.filtered %}
+						<th>Eligibility Criteria</th>
+						{% endif %}
+					</tr>
+				</thead>
+				{% for code in ns.combined.va_trials_by_ncit %}
+				<tbody class="usa-accordion">
+					<tr>
+						<td colspan="4" class="page-header">
+							<button class="usa-accordion-button" aria-expanded="false" aria-controls="{{ code['ncit']['ncit'] }}"> Trials for condition: {{ code["ncit"]["ncit"]["ncit_desc"] }} ({{ code["ncit"]["ncit"]["ncit"] }})</button>
+						</td>
+						<!-- <td colspan="4" class="page-header"><button type="button" class="tbtn"><i class="fa fa-plus-circle"></i>   Trials for condition: {{ code["ncit"]["ncit_desc"] }} ({{ code["ncit"]["ncit"] }})</button> </td>-->
+					</tr>
+				</tbody>
+				<tbody id="{{ code['ncit']['ncit'] }}" class="usa-accordion-content">
+					{% for trial in code["trials"] %}
+					<tr>
+						<td><a href="/trial?id={{ trial.id }}">{{ trial.id }}</a></td>
+						<td>{{ trial.title }}</td>
+						<td>
+							{% if trial.filter_condition %}
+							{% for condition, include in trial.filter_condition %}
+							{{condition}}
+							{% endfor %}
+							{% endif %}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+				{% endfor %}
+			</table>	
+		</div>
+		<script>
+			function displayTrials() {
+				var checkBox = document.getElementById("isVA");
+				var allTrials = document.getElementById("allTrials");
+				var VATrials = document.getElementById("VATrials");
+				if(checkBox.checked == true)
+				{
+					VATrials.style.display = "block";
+					allTrials.style.display = "none";
+				} else 
+				{
+					VATrials.style.display = "none";
+					allTrials.style.display = "block";
+				}
+			}
+		</script>
 		{% else %}
 		<form action="{{ url_for('getInfo') }}" method="POST" class="cts-launch-progress-bar">
 			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -409,6 +470,48 @@
 			</div>
 			<button type="submit">Add Conditions</button>
 		</form>
+	</div>
+	{% elif about_selection %}
+	<div class="tab-pane active" id="welcome">
+		<h1>About Us</h1>
+		<h2>Mission</h2>
+		<p>
+			For the past 5 years, GirlsComputingLeague has been a leader in bringing emerging 
+			technology to the students who will shape its future and shift the balance of diversity in 
+			the technology workplace. We aim to empower students in our programs to be leaders and 
+			changemakers in their communities through hands-on learning and instilling confidence and community.
+		</p>
+		<p>
+			For more information on our mission, please visit our website
+			<a target="_blank" href="{{ url_for('privacy_policy') }}">here</a>.
+		</p>
+		<p>
+			<img style="position:absolute; TOP:35px; LEFT:750px; WIDTH:300px; HEIGHT:100px"src="data:image/png;base64,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" alt="GCL Logo">
+		</p>
+		<h2>About the Team</h2>
+		<p>
+			Insert team pictures+bio here
+		</p>
+		<h2>What is CTS?</h2>
+		<p>
+			<iframe width="540" height="315"
+				src="https://www.youtube.com/embed/yFZ9yKFWLX4">
+			</iframe>
+		</p>
+		<h2>Current Research</h2>
+		<p>
+			Link to Published Research papers here
+		</p>
+		<h2>Featured Articles</h2>
+		<p>
+			<a href="https://www.research.va.gov/currents/1120-AI-tech-sprint-uses-innovation-to-benefit-Veterans.cfm">Featured in an article on VA Research</a>
+		</p>
+		<p>
+			<a href="https://wjla.com/news/local/northern-virginia-students-launch-app-connects-patients-clinical-covid-trials">ABC-7 News Interview</a>
+		</p>
+		<p>	
+			<a href="https://www.healthcareitnews.com/news/meet-students-trying-simplify-clinical-trial-recruitment-veterans">Healthcare IT News</a>
+		</p>
 	</div>
 	{% endif %}
 </div>

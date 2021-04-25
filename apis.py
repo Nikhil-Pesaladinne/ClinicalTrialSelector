@@ -127,6 +127,7 @@ class NciApi(Api):
     def _get_trials_page(self, start_from: int) -> Dict[str,Any]:
         url = self.base_url
         params: Dict[str, Union[str, List[str]]] = {'size': f"{self.size}"}
+        #logging.info(f"*********************************************{self.age}")
         params['from'] = f"{start_from}"
         params['diseases.nci_thesaurus_concept_id'] = list(self.ncit_codes)
         params['eligibility.structured.gender'] = [self.gender, 'BOTH']
@@ -158,7 +159,6 @@ class NciApi(Api):
             for start_from in range(1+self.size, 1+total, self.size):
                 logging.info(f"Trial query starting at {start_from}")
                 pages[spawn(self._get_trials_page, start_from)] = start_from
-
             for page in iwait(pages):
                 logging.info(f"Received trials starting at {pages[page]}")
                 for trial in page.value.get('trials', []):
