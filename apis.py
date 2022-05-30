@@ -42,7 +42,8 @@ class UmlsApi(Api):
 
     def get_crosswalk(self, orig_code: str, codeset: str) -> Tuple[Optional[str], Optional[str]]:
         tik = self.auth.getst(self.tgt)
-        params = {"targetSource": "NCI", "ticket": tik}
+        #params = {"targetSource": "NCI", "ticket": tik}
+        params = {"apiKey": self.auth.apikey}
         route = "/crosswalk/current/source/"
         if orig_code[-1] == '.':
             logging.warn(f"Original Code = {orig_code}")
