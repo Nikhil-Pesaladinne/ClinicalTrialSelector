@@ -17,7 +17,7 @@ class Api():
         self.base_url: str = app.config[self.url_config]
 
     def _get_response(self, url: str, headers: Optional[Dict[str,str]] = None, params: Optional[Dict[str, Union[str, List[str]]]] = None) -> req.Response:
-        return req.get(url, headers=headers, params=params)
+        return req.get(url, headers=headers, params=params, verify=False)
 
     def _get(self, url: str, headers: Optional[Dict[str, str]] = None, params: Optional[Dict[str, Union[str, List[str]]]] = None) -> Dict[str,Any]:
         res= self._get_response(url, headers=headers, params=params)

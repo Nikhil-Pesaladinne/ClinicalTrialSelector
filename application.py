@@ -20,8 +20,8 @@ from flask_session import Session
 from flask_talisman import Talisman
 from authlib.integrations.flask_client import OAuth
 import hacktheworld as hack
-from infected_patients import (get_infected_patients, get_authenticate_bcda_api_token, get_diseases_icd_codes,
-                               EXPORT_URL, submit_get_patients_job, get_infected_patients_info)
+#from infected_patients import (get_infected_patients, get_authenticate_bcda_api_token, get_diseases_icd_codes,
+                               #EXPORT_URL, submit_get_patients_job, get_infected_patients_info)
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import StringField, validators
 from concurrent.futures import ThreadPoolExecutor, as_completed
