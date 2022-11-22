@@ -87,6 +87,10 @@ def showtrials():
 def welcome():
     return render_template('welcome.html', welcome_selection="current")
 
+@app.route('/aboutus')
+def aboutus():
+    return render_template('welcome.html', aboutus_selection="current")
+
 @app.route("/authenticate/<source>", methods=["POST"])
 def authenticate(source):
     app.logger.info(f"Authenticating via {source.upper()}...")

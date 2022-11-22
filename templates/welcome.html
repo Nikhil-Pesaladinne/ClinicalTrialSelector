@@ -195,6 +195,63 @@
 			<a target="_blank" href="{{ url_for('privacy_policy') }}">privacy policy</a>.
 		</p>
 	</div>
+	{% elif aboutus_selection %}
+	<div class="tab-pane active" id="aboutus">
+		<h2>Our Founding</h2>
+		<p>
+			CTS was developed by a team of high schoolers part of GCL, a non-profit organization founded 
+			in 2015 to provide assistance in introducing technology to all students, especially those coming from 
+			an underrepresented or disadvantaged background. Over the past 6 years, we’ve donated over 
+			$100,000 in resources to help these growing communities. The CTS team participated in the 2019 VA 
+			AI Tech Sprint, where we met with VA researchers and subject matter experts, who provided 
+			invaluable feedback in developing an initial proof-of-concept. Since then, we have been in 
+			collaboration with Dr. Gil Alterovitz and Dr. Rafael Fricks of the Department of Veterans Affairs to further CTS’ efforts. 
+
+		</p>
+		<h2>VA Innovation</h2>
+		<p>
+			As of September 2021, CTS was recognized as a VA Innovation, and the VA has graciously 
+			offered to host CTS in their environment. We have been working with the VA Innovation 
+			and Enterprise Cloud team to intake CTS within VA systems. This mission was boosted after Pesaladinne 
+			and Thammineni presented CTS in the 2022 Department of Veterans Affairs National Artificial Intelligence 
+			Institute Brain Summit in Washington, D.C., the only high schoolers in this global summit.  
+		</p>
+		<h2>VA Deployment</h2>
+		<p>
+			Nikhil Pesaladinne is working with Joseph Johnson and the VA team led by Dr. Fricks to manage 
+			the deployment of CTS as a VA application within their GovCloud. CTS’ architecture was approved 
+			by the VA Enterprise Cloud and Security team and is now close to receiving an Authorization to Operate. 
+		</p>
+		<h2>Publications and Outreach</h2>
+		<p>
+			Current efforts with CTS include an academic paper effort that is being led by Nikhil Pesaladinne and 
+			Srithan Ram Thammineni. This paper details the gap in the industry of clinical trials that CTS will 
+			fill, specifically with sections explaining how CTS works (technical summary), the technology that we 
+			used to bolster CTS’s functionality, results from our various field tests, our governmental approvals, 
+			and future plans for expanding the scope of the project to make it available for more veterans and CMS 
+			beneficiaries. This paper has been worked on by authors Pesaladinne and Thammineini and a few other CTS team members.
+			Furthermore, the paper has been edited and approved by experts at the Department 
+			of Veterans Affairs (VA)—specifically Dr. Rafael Fricks and Dr. Anthony Boese—thus allowing us, in the past, 
+			to submit to the Journal of Clinical Oncology Precision Oncology (JCO PO) in affiliation/association with the VA. 
+			Additionally, the paper is currently being slightly reworked to fit the parameters necessary to be submitted for 
+			a poster presentation at the 2023 AMIA Clinical Informatics Conference. 
+		</p>
+		<h2>Current Team</h2>
+		<h4>Nikhil Pesaladinne, Project Lead </h4>
+			<p> Nikhil is a senior at Thomas Jefferson High School for Science and Technology, and has worked on CTS for almost 3 years. 
+				When he is not working on CTS, he loves doing math and is the captain of TJ's math team. In his free time, he plays for the 
+				TJHSST soccer team and enjoys listening to music. </thead> </p>
+		<h4>Srithan Ram Thammineni, Research Lead</h4>
+			<p> Ram is a high school senior at BASIS Independent McLean, and has been working with CTS for almost 2 years.
+				Outside of CTS, he is the captain of his school’s Varsity Basketball Team, a quiz bowl national championship 
+				runner-up, and an avid mountain biker. </p>
+
+		<h2>Past Members</h2>
+		<h4>Ethan Ocasio, Harvard 26’</h4> 
+		<h4>Shreeja Kikkisetti, Harvard 26’</h4>
+		<h4>Neeyanth Kopparappu, Harvard 24’</h4>
+			
+	</div>
 	{% elif trials_selection %}
 	<div class="tab-pane active" id="trials">
 		{% if ns.combined and ns.combined.loaded %}
